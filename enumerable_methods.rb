@@ -77,29 +77,64 @@ module Enumerable
     end
     true
   end
+
+  def my_count(item = nil)
+    if block_given?
+      counter = 0
+      my_each do |element|
+        result = yield(element)
+        counter += 1 if result == true
+      end
+      counter
+    elsif !item.nil?
+      counter = 0
+      my_each do |element|
+        counter += 1 if element == item
+      end
+      counter
+    else
+      size
+    end
+  end
+
+  def my_map(proc = nil)
+    return to_enum unless block_given?
+
+    mapped = []
+    my_each do |element|
+      mapped << (block_given? ? yield(element) : proc.call)
+    end
+    mapped
+  end
+
+  def my_inject(initial = 0, operation = nil)
+    if block_given?
+      i = 0
+      memo = initial
+      while i < size
+        memo = yield(memo, self[i])
+        i += 1
+      end
+      memo
+    elsif !operation.nil?
+      block = case operation
+              when Symbol
+                ->(accum, value) { accum.send(operation, value) }
+              else
+                puts 'Invalid operation'
+              end
+
+      i = 0
+      memo = initial
+      while i < size
+        memo = block.call(memo, self[i])
+        i += 1
+      end
+      memo
+    end
+  end
 end
 
-test_my_each = [1, 2, 3, 4, 5]
-test_my_each_with_index = %w[test for each with index method]
-test_my_select = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
-#test_my_each.my_each { |el| puts el }
-#test_my_each_with_index.my_each_with_index { |el, i| puts "Element = #{el} corresponding index = #{i}" }
-#print test_my_select.my_select { |element| element < 8 }
-# tests for my_all?
-#puts %w[ant bear cat].my_all? { |word| word.length >= 3 } #=> true
-#puts %w[ant bear cat].my_all? { |word| word.length >= 4 } #=> false
-#puts [nil, true, 99].my_all?                              #=> false
-#puts [].my_all?                                           #=> true
-# tests for my_any
-#puts %w[ant bear cat].my_any? { |word| word.length >= 3 } #=> true
-#puts %w[ant bear cat].my_any? { |word| word.length >= 4 } #=> true
-#puts [nil, true, 99].my_any?                              #=> true
-#puts [].my_any?                                           #=> false
-# tests for my_none?
-#puts %w{ant bear cat}.my_none? { |word| word.length == 5 } #=> true
-#puts %w{ant bear cat}.my_none? { |word| word.length >= 4 } #=> false
-#puts [].my_none?                                           #=> true
-#puts [nil].my_none?                                        #=> true
-#puts [nil, false].my_none?                                 #=> true
-#puts [nil, false, true].my_none?                           #=> false
+def multiply_els(enum)
+  enum.my_inject(1, :*)
+end
