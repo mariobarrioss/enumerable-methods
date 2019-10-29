@@ -38,59 +38,38 @@ module Enumerable
 
   def my_all?
     if block_given?
-      my_each do |element|
-        result = yield(element)
-        return false if result == false
-      end
+      my_each { |element| return false if yield(element) == false }
     else
-      my_each do |element|
-        return false if element.nil? || element == false
-      end
+      my_each { |element| return false if element.nil? || element == false }
     end
     true
   end
 
   def my_any?
     if block_given?
-      my_each do |element|
-        result = yield(element)
-        return true if result == true
-      end
+      my_each { |element| return true if yield(element) }
     else
-      my_each do |element|
-        return true if element == true
-      end
+      my_each { |element| return true if element }
     end
     false
   end
 
   def my_none?
     if block_given?
-      my_each do |element|
-        result = yield(element)
-        return false if result == true
-      end
+      my_each { |element| return false if yield(element) }
     else
-      my_each do |element|
-        return false if element == true
-      end
+      my_each { |element| return false if element }
     end
     true
   end
 
   def my_count(item = nil)
+    counter = 0
     if block_given?
-      counter = 0
-      my_each do |element|
-        result = yield(element)
-        counter += 1 if result == true
-      end
+      my_each { |element| counter += 1 if yield(element) }
       counter
     elsif !item.nil?
-      counter = 0
-      my_each do |element|
-        counter += 1 if element == item
-      end
+      my_each { |element| counter += 1 if element == item }
       counter
     else
       size
