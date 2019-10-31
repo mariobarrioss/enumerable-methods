@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Style/CaseEquality
+
 module Enumerable
   def my_each
     return to_enum unless block_given?
@@ -28,39 +30,37 @@ module Enumerable
 
     selected = []
     my_each do |element|
-      result = yield(element)
-      next unless result
+      next unless yield(element)
 
       selected << element
     end
     selected
   end
 
-  def my_all?
+  def my_all?(arg = nil)
     if block_given?
-      my_each { |element| return false if yield(element) == false }
+      my_each { |element| return false unless yield(element) }
+    elsif arg.nil
+      my_each { |element| return false unless element }
     else
-      my_each { |element| return false if element.nil? || element == false }
+      my_each { |element| return false unless check_arg(element, arg) }
     end
     true
   end
 
-  def my_any?
+  def my_any?(arg = nil, &block)
     if block_given?
-      my_each { |element| return true if yield(element) }
-    else
+      my_each { |element| return true if block.call(element) }
+    elsif arg.nil?
       my_each { |element| return true if element }
+    else
+      my_each { |element| return true if check_arg(element, arg) }
     end
     false
   end
 
-  def my_none?
-    if block_given?
-      my_each { |element| return false if yield(element) }
-    else
-      my_each { |element| return false if element }
-    end
-    true
+  def my_none?(arg = nil, &block)
+    !my_any?(arg, &block)
   end
 
   def my_count(item = nil)
@@ -68,7 +68,7 @@ module Enumerable
     if block_given?
       my_each { |element| counter += 1 if yield(element) }
       counter
-    elsif !item.nil?
+    elsif item
       my_each { |element| counter += 1 if element == item }
       counter
     else
@@ -110,6 +110,16 @@ module Enumerable
         i += 1
       end
       memo
+    end
+  end
+
+  private
+
+  def check_arg(item, argument)
+    if argument.class == Class
+      item.class.ancestors.include? argument
+    else
+      item === argument
     end
   end
 end
