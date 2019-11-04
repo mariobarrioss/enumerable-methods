@@ -77,8 +77,9 @@ module Enumerable
   def my_map(proc = nil)
     return to_enum unless block_given?
 
+    array = to_a.dup
     mapped = []
-    my_each do |element|
+    array.my_each do |element|
       mapped << (block_given? ? yield(element) : proc.call)
     end
     mapped
