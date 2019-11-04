@@ -38,7 +38,7 @@ module Enumerable
   def my_all?(arg = nil)
     if block_given?
       my_each { |element| return false unless yield(element) }
-    elsif arg.nil
+    elsif arg.nil?
       my_each { |element| return false unless element }
     else
       my_each { |element| return false unless check_arg(element, arg) }
@@ -121,5 +121,5 @@ module Enumerable
 end
 
 def multiply_els(enum)
-  enum.my_inject(1, :*)
+  enum.my_inject(:*)
 end
