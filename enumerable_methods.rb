@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Style/CaseEquality
-
 module Enumerable
   def my_each
     return to_enum unless block_given?
@@ -86,41 +84,39 @@ module Enumerable
     mapped
   end
 
-  def my_inject(initial = 0, operation = nil)
+  def my_inject(*args)
+    enum = to_a.dup
     if block_given?
-      i = 0
-      memo = initial
-      while i < size
-        memo = yield(memo, self[i])
-        i += 1
-      end
+      memo =
+        args[0] || enum.shift
+      enum.my_each { |element| memo = yield(memo, element) }
       memo
-    elsif !operation.nil?
-      block = case operation
-              when Symbol
-                ->(accum, value) { accum.send(operation, value) }
-              else
-                puts 'Invalid operation'
-              end
-
-      i = 0
-      memo = initial
-      while i < size
-        memo = block.call(memo, self[i])
-        i += 1
-      end
-      memo
+    else
+      my_inject_helper(args, enum)
     end
   end
 
   private
 
+  # rubocop:disable Style/CaseEquality
   def check_arg(item, argument)
     if argument.class == Class
       item.class.ancestors.include? argument
     else
       item === argument
     end
+  end
+  # rubocop:enable Style/CaseEquality
+
+  def my_inject_helper(args, enum)
+    if args[0] && args[1]
+      memo = args[0]
+      enum.my_each { |element| memo = memo.send(args[1], element) }
+    elsif args[0].is_a? Symbol
+      memo = enum.shift
+      enum.my_each { |element| memo = memo.send(args[0], element) }
+    end
+    memo
   end
 end
 
