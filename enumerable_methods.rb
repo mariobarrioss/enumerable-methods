@@ -9,7 +9,6 @@ module Enumerable
       yield(self[index])
       index += 1
     end
-    self
   end
 
   def my_each_with_index
@@ -20,7 +19,6 @@ module Enumerable
       yield(self[index], index)
       index += 1
     end
-    self
   end
 
   def my_select
@@ -98,15 +96,15 @@ module Enumerable
 
   private
 
-  # rubocop:disable Style/CaseEquality
   def check_arg(item, argument)
     if argument.class == Class
       item.class.ancestors.include? argument
+    elsif argument.class == Regexp
+      item =~ argument
     else
-      item === argument
+      item == argument
     end
   end
-  # rubocop:enable Style/CaseEquality
 
   def my_inject_helper(args, enum)
     if args[0] && args[1]
