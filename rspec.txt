@@ -1,0 +1,53 @@
+
+Enumerable
+  my_each
+[32m    iterates through the original array and fills a new one to compare with the original[0m
+[32m    returns an enumerable if no code block is given[0m
+[32m    runs the code block on each element[0m
+  my_select
+[32m    returns all items for which the given block returns a true value[0m
+[32m    returns an enumerable if no code block is given[0m
+  my_all?
+    when code block is given
+[32m      returns true if the block never returns false or nil[0m
+    when code block is given
+[32m      returns false if the block returns any falsy value[0m
+    when no code block is given
+[32m      returns true if none of the elements are false or nil[0m
+    when no code block is given
+[32m      returns false if any of the elements are false or nil[0m
+    when no code block is given
+[32m      returns true if none of the elements are false or nil[0m
+  my_any?
+    when code block is given
+[32m      returns true if the block ever return a true value[0m
+    when code block is given
+[32m      returns false if the block does not return any true value[0m
+    when no code block is given
+[32m      returns true if any of the elements are true[0m
+    when an argument is given
+[32m      returns true if any of the elements is === to the argument[0m
+  my_count
+    when no code block is given
+[32m      returns the number of elements[0m
+    when an argument is given
+[32m      returns the number of elements which are equal to the argument[0m
+    when code block is given
+[32m      returns the number of elements for which the block returns a true value[0m
+  my_inject
+    when code block is given without any argument
+[32m      passes each element and accumulates the sum sequentially[0m
+    when code block is given without any argument
+[32m      passes each element and accumulates the product sequentially[0m
+    when code block and an argument are given
+[32m      accumulates the sum sequentially using the argument as base[0m
+    when code block and an argument are given
+[32m      accumulates the product sequentially using the argument as base[0m
+    when the operator is passed as a symbol with other argument
+[32m      passes each element and accumulated each result sequentially[0m
+    when the operator is passed as a symbol with other argument
+[32m      passes each element and accumulated each result sequentially[0m
+
+Finished in 0.02815 seconds (files took 0.14373 seconds to load)
+[32m23 examples, 0 failures[0m
+
